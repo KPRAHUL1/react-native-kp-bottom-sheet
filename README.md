@@ -1,5 +1,7 @@
 # react-native-kp-bottom-sheet
 
+**[Live demo →](https://kprahul1.github.io/react-native-kp-bottom-sheet/)**  ·  [npm](https://www.npmjs.com/package/react-native-kp-bottom-sheet)
+
 A bottom sheet for React Native that works the same on Android as it does on iOS and web.
 
 Content-sized by default, gesture-driven, and rendered above tab bars and navigators. Ships with two ready-made sheets — an options menu and a confirmation dialog — on top of the primitive.
