@@ -6,15 +6,25 @@ A bottom sheet for React Native that works the same on Android as it does on iOS
 
 Content-sized by default, gesture-driven, and rendered above tab bars and navigators. Ships with two ready-made sheets — an options menu and a confirmation dialog — on top of the primitive.
 
-```sh
-npm install react-native-kp-bottom-sheet
-```
+## Install
 
-Peer dependencies, which an Expo app already has:
+Install the peer dependencies **first**, then the package. The order matters — see [Troubleshooting](#troubleshooting) if you skip it.
+
+**Expo:**
 
 ```sh
 npx expo install react-native-reanimated react-native-gesture-handler react-native-safe-area-context
+npm install react-native-kp-bottom-sheet
 ```
+
+**Bare React Native** — pick versions your React Native supports, for example on RN 0.81:
+
+```sh
+npm install react-native-reanimated@~4.1.1 react-native-worklets@0.5.1 react-native-gesture-handler@~2.28.0 react-native-safe-area-context@~5.6.0
+npm install react-native-kp-bottom-sheet
+```
+
+`react-native-worklets` is separate because Reanimated 4 requires it; Expo installs it for you, bare projects have to ask.
 
 ## Why not just use a `<Modal>`?
 
@@ -173,6 +183,36 @@ For a one-off, `style` on any sheet wins over the theme.
   </View>
 </SheetProvider>
 ```
+
+## Troubleshooting
+
+### `ERESOLVE unable to resolve dependency tree` on install
+
+```
+Could not resolve dependency:
+peer react-native@"0.83 - 0.87" from react-native-reanimated@4.6.0
+  peer react-native-reanimated@">=3.6.0" from react-native-kp-bottom-sheet
+```
+
+Your project doesn't have Reanimated yet, so npm went to fetch it — and npm picks the *newest* version satisfying `>=3.6.0`, which is currently 4.6.x. That version requires a newer React Native than yours, and the two demands can't both be met.
+
+Install a Reanimated your React Native supports first, then this package. See [Install](#install) above. With a compatible version already present, npm sees it satisfies `>=3.6.0` and stops reaching for the newest.
+
+No peer range here can prevent this: the conflict is between Reanimated and *your* React Native version, not with this package.
+
+**Don't reach for `--force` or `--legacy-peer-deps`.** They silence the message while installing the incompatible Reanimated anyway, trading a clear error at install time for a native crash at runtime.
+
+### The sheet renders but never drags on Android
+
+Check that `<GestureHandlerRootView style={{ flex: 1 }}>` wraps your app — gestures fail silently without it. And if you have wrapped this sheet in a React Native `<Modal>` yourself, unwrap it; that reintroduces the exact problem this package exists to avoid.
+
+### Nothing appears when `visible` is true
+
+There's no `<SheetProvider>` above the sheet. In development it throws saying so; in production it fails quietly.
+
+### A list inside the sheet won't scroll
+
+Pass `dragHandleOnly`. See [Sheets containing a list](#sheets-containing-a-list).
 
 ## Not in this version
 
